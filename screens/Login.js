@@ -1,30 +1,70 @@
-import { StyleSheet, Text, View, TextInput,TouchableOpacity, justifyContent, alignItems, Button, Color } from 'react-native';
-export default function Login({navigation}) {
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export default function Login({ navigation }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter email and password');
+      return;
+    }
+    try {
+      const usersData = await AsyncStorage.getItem('users');
+      if (usersData) {
+        const users = JSON.parse(usersData);
+        const user = users.find(u => u.email === email && u.password === password);
+        if (user) {
+          Alert.alert('Success', 'Login successful');
+          navigation.navigate('Home', { user });
+        } else {
+          Alert.alert('Error', 'Invalid email or password');
+        }
+      } else {
+        Alert.alert('Error', 'No users found. Please register first.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to load data');
+    }
+  };
+
   return (
     <View style={style.container}>
       <Text style={style.login}>Login</Text>
 
-      <Text style={style.text}>Email/Username</Text>
-      <TextInput value='lmao@gmail.com' style={style.box}></TextInput>
-      <View style={{height:20}}></View>
+      <Text style={style.text}>Email</Text>
+      <TextInput
+        style={style.box}
+        value={email}
+        onChangeText={setEmail}
+        placeholder="Enter your email"
+        keyboardType="email-address"
+      />
+      <View style={{ height: 20 }} />
 
       <Text style={style.text}>Password</Text>
-      <TextInput value='....' style={style.box}></TextInput>
+      <TextInput
+        style={style.box}
+        value={password}
+        onChangeText={setPassword}
+        placeholder="Enter your password"
+        secureTextEntry
+      />
 
-      <View style={{flexDirection:'row'}}>
-        <Text style={[style.forget,{flex:2}]}>Forget password?</Text>
+      <View style={{ flexDirection: 'row' }}>
+        <Text style={[style.forget, { flex: 2 }]}>Forget password?</Text>
 
         <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-            <Text style={[style.forget,{color:'blue',flex:1}]}>Register?</Text> 
+          <Text style={[style.forget, { color: 'blue', flex: 1 }]}>Register?</Text>
         </TouchableOpacity>
       </View>
-      
-      <View style={{height:20}}></View>
-      <TouchableOpacity style={style.button}>
-        <Text style={style.textinbox}>Sign in</Text> 
-      </TouchableOpacity>
 
-      
+      <View style={{ height: 20 }} />
+      <TouchableOpacity style={style.button} onPress={handleLogin}>
+        <Text style={style.textinbox}>Sign in</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -38,6 +78,7 @@ const style = StyleSheet.create({
     borderColor: 'black',
     height:"90%",
     width:"auto",
+    minWidth:300,
     padding:40,
     margin:50,
   },
