@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View, TextInput,TouchableOpacity, justifyContent, alignItems, Button, Color } from 'react-native';
+import { StyleSheet, Text, View, TextInput,TouchableOpacity, justifyContent, alignItems, Button, Color, Alert, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
 import { useState, useEffect } from 'react';
 
 export default function Infor({navigation, route}) {
@@ -8,18 +9,58 @@ export default function Infor({navigation, route}) {
   const [address, setAddress] = useState("");
   const [avatar, setAvatar] = useState("");
   const [des, setDes] = useState("");
+  
+  
   useEffect(() => {
-    if(route.params?.user){
-      setUsername(route.params.user.username);
-      setEmail(route.params.user.email);
-      setAddress(route.params.user.address);
-      setAvatar(route.params.user.avatar);
-      setDes(route.params.user.des);
-    }
+    const loaduser = async() => {
+      if (route.params?.email){
+        const usersData = await AsyncStorage.getItem('users');
+        const users = JSON.parse(usersData);
+        const user = users.find(u => u.email === route.params.email);
+        if (user){
+          setUsername(user.username);
+          setEmail(user.email);
+          setAddress(user.address);
+          setAvatar(user.avatar);
+          setDes(user.des);
+        }
+      }
+    };
+    loaduser();
   }, []);
 
-  const handleSave = async () => {
+  const chonanh = async() => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      quality: 1,
+    });
+    if (!result.canceled) {
+      setAvatar(result.assets[0].uri);
+    }
+  };
 
+  const handleSave = async () => {
+    try {
+      const usersData = await AsyncStorage.getItem('users');
+      const users = JSON.parse(usersData);
+      const userIndex = users.findIndex(u => u.email === route.params.email);
+      
+      if (userIndex !== -1) {
+        users[userIndex] = {
+          username: username,
+          password: users[userIndex].password,
+          email:email,
+          address:address,
+          avatar:avatar,
+          des:des
+        };
+        await AsyncStorage.setItem('users', JSON.stringify(users));
+        Alert.alert('Thành công', 'Cập nhật thông tin thành công');
+      }
+    } catch (error) {
+      Alert.alert('Lỗi', 'Không thể cập nhật thông tin');
+    }
   };
 
   const handleLogout = async () => {
@@ -30,7 +71,11 @@ export default function Infor({navigation, route}) {
 
       <View style={{flexDirection:'row',alignItems:'center', justifyContent:'center',alignSelf:'center'}}>
         <Text style={[styles.login]}>Who!</Text>
-        <View style={[styles.box,{width:100,height:100}]}/>
+        <TouchableOpacity style={[{width:100,height:100,borderWidth: 2,alignItems:'center',justifyContent:'center',}]} onPress={chonanh}>
+          <Image source={{uri:avatar}} style={{width:100,height:100}}/>
+        </TouchableOpacity>
+          
+        
       </View>
 
       <Text style={styles.text}>Name</Text>
@@ -43,17 +88,17 @@ export default function Infor({navigation, route}) {
       <TextInput style={styles.box} value={address} onChangeText={setAddress}></TextInput>
 
       <Text style={styles.text}>Avatar URL</Text>
-      <TextInput style={styles.box} value={avatar} onChangeText={setAvatar}></TextInput>
+      <TextInput style={styles.box} value={avatar} onChangeText={setAvatar} onPress={chonanh} readOnly></TextInput>
 
       <Text style={styles.text}>Description</Text>
-      <TextInput style={[styles.box,{height:150}]} value={des} onChangeText={setDes}></TextInput>
+      <TextInput style={[styles.box,{height:150}]} value={des} onChangeText={setDes} multiline></TextInput>
 
       <View style={{flexDirection:'row',justifyContent:'center'}}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleSave}>
           <Text style={styles.textinbox}>Save</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleLogout}>
           <Text style={styles.textinbox}>Logout</Text>
         </TouchableOpacity>
       </View>

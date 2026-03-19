@@ -1,10 +1,17 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Login({ navigation }) {
+export default function Login({ navigation,route }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+      if(route.params?.user){
+        setEmail(route.params.user.email);
+        setPassword(route.params.user.password);
+      }
+    }, []);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -18,7 +25,7 @@ export default function Login({ navigation }) {
         const user = users.find(u => u.email === email && u.password === password);
         if (user) {
           Alert.alert('Success', 'Login successful');
-          navigation.navigate('Home', { user });
+          navigation.replace('Home', { email : user.email });
         } else {
           Alert.alert('Error', 'Invalid email or password');
         }
