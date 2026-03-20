@@ -25,7 +25,7 @@ export default function Login({ navigation,route }) {
         const user = users.find(u => u.email === email && u.password === password);
         if (user) {
           Alert.alert('Success', 'Login successful');
-          navigation.replace('Home', { email : user.email });
+          navigation.replace('MainScreen', { email : user.email });
         } else {
           Alert.alert('Error', 'Invalid email or password');
         }

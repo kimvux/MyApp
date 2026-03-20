@@ -96,7 +96,7 @@ export default function Infor({navigation, route}) {
       <Text style={styles.text}>Description</Text>
       <TextInput style={[styles.box,{height:150}]} value={des} onChangeText={setDes} multiline></TextInput>
 
-      <View style={{flexDirection:'row',justifyContent:'center'}}>
+      <View style={{flexDirection:'row',justifyContent:'center',alignSelf:'center'}}>
         <TouchableOpacity style={styles.button} onPress={handleSave}>
           <Text style={styles.textinbox}>Save</Text>
         </TouchableOpacity>
@@ -118,7 +118,6 @@ const styles = StyleSheet.create({
     width:"auto",
     minWidth:300,
     padding:40,
-    margin:50,
   },
   box:{
     borderWidth: 2,
@@ -135,7 +134,6 @@ const styles = StyleSheet.create({
     fontSize:60,
     fontWeight:'bold',
     fontFamily:'Courier New',
-    marginVertical:50
   },
   text:{
     fontSize:22,

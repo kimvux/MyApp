@@ -1,6 +1,10 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Alert, Image, Dimensions} from 'react-native';
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+
+const Tab = createBottomTabNavigator();
 
 function Post({ID,Avatar,Username,UserId,Description,Source}){
     const screenWidth = Dimensions.get('window').width;
@@ -72,12 +76,15 @@ export default function Home({navigation,route}){
 
     return (
         <View style={style.container}>
-            <View style={style.header}>
+            {/**
+             * <View style={style.header}>
                 <Text style={style.techbook}>Techbook</Text>
                 <TouchableOpacity style={{}}>
                     <Image source={require("../assets/settings.png")}/>
                 </TouchableOpacity>
             </View>
+             */}
+            
 
             <ScrollView style={{flex:1,width:'100%',backgroundColor:'lightgray'}}>
                 {crstate === 0 && posts.map(post => (
@@ -92,8 +99,8 @@ export default function Home({navigation,route}){
                     />
                 ))}
             </ScrollView>
-
-            <View style={style.footer}>
+            {/**
+             * <View style={style.footer}>
                 <TouchableOpacity onPress={() => setcrstate(0)}>
                     <Image source={crstate === 0 ? require("../assets/home_solid.png") : require("../assets/home.png")}/>
                 </TouchableOpacity>
@@ -114,6 +121,8 @@ export default function Home({navigation,route}){
                     <Image source={crstate === 4 ? require("../assets/user_solid.png") : require("../assets/user.png")}/>
                 </TouchableOpacity>
             </View>
+             */}
+            
             
         </View>
     )
@@ -125,7 +134,6 @@ const style = StyleSheet.create({
     alignItems:'flex-start',
     height:'100%',
     minWidth:300,
-    paddingTop:45
   },
   techbook:{
     fontFamily:'Courier New',
