@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Alert,
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function Post({ID,Username,UserId,Description,Source}){
+function Post({ID,Avatar,Username,UserId,Description,Source}){
     const screenWidth = Dimensions.get('window').width;
     const asset = Image.resolveAssetSource(Source);
     const aspectRatio = asset.height / asset.width;
@@ -10,16 +10,16 @@ function Post({ID,Username,UserId,Description,Source}){
 
     return(
         <View style={{backgroundColor:'white', marginVertical:1, width:'100%'}}>
-            <View style={{flexDirection:'row',  marginLeft:10}}>
-                <Text>{ID}</Text>
+            <View style={{flexDirection:'row', alignItems:'center', margin:10}}>
+                <Image source={Avatar} style={{width: 40, height: 40, borderRadius:90}}/>
                 <View style={{flexDirection:'column', marginLeft:10}}>
-                    <Text style={{fontFamily:'Courier New'}}>{Username}</Text>
-                    <Text>{UserId}</Text>
+                    <Text style={{fontFamily:'Courier New', fontSize:25}}>{Username}</Text>
+                    <Text style={{fontFamily:'Courier New', fontSize:12}}>@UID_{UserId}</Text>
                 </View>
                 
             </View>
             
-            <Text style={{marginLeft:10}}>{Description}</Text>
+            <Text style={{marginHorizontal:10, marginBottom:10}}>{Description}</Text>
             
             <Image source={Source} style={{width:'100%', height: imageHeight, resizeMode:'contain'}}/>
 
@@ -46,23 +46,26 @@ export default function Home({navigation,route}){
     const posts = [
         {
             id: 3,
-            username: "kim",
-            userid: "12039",
-            description: "Hello world",
+            avatar: require("../assets/PostImages/ava1.jpg"),
+            username: "Kimvux",
+            userid: "82765",
+            description: "Look at this!",
             source: require("../assets/PostImages/zhao.png")
         },
         {
             id: 1,
-            username: "kim",
+            avatar: require("../assets/PostImages/ava2.jpg"),
+            username: "Kiệt",
             userid: "12039",
-            description: "Hello world",
+            description: "Ỏ...",
             source: require("../assets/PostImages/orp.png")
         },
         {
             id: 2,
-            username: "kim",
-            userid: "12039",
-            description: "Hello world",
+            avatar: require("../assets/PostImages/ava3.jpg"),
+            username: "Lân",
+            userid: "77233",
+            description: "Hello",
             source: require("../assets/PostImages/belle.png")
         },
     ];
@@ -77,10 +80,11 @@ export default function Home({navigation,route}){
             </View>
 
             <ScrollView style={{flex:1,width:'100%',backgroundColor:'lightgray'}}>
-                {posts.map(post => (
+                {crstate === 0 && posts.map(post => (
                     <Post
                     key={post.id}
                     ID={post.id}
+                    Avatar={post.avatar}
                     Username={post.username}
                     UserId={post.userid}
                     Description={post.description}
@@ -145,5 +149,5 @@ const style = StyleSheet.create({
     paddingVertical:25,
     paddingHorizontal:45,
     borderTopWidth:1,
-  },    
+  },
 });

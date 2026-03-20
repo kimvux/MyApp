@@ -64,7 +64,10 @@ export default function Infor({navigation, route}) {
   };
 
   const handleLogout = async () => {
-
+    navigation.reset({
+    index: 0,
+    routes: [{ name: "Login" }],
+  });
   };
   return (
     <View style={styles.container}>
@@ -111,8 +114,6 @@ const styles = StyleSheet.create({
     flexDirection:'column',
     justifyContent:'flex-start',
     alignItems:'flex-start',
-    borderWidth: 3,
-    borderColor: 'black',
     height:"90%",
     width:"auto",
     minWidth:300,
