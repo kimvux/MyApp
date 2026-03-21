@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, } from 'react-native';
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -38,41 +38,43 @@ export default function Login({ navigation,route }) {
   };
 
   return (
-    <View style={style.container}>
-      <Text style={style.login}>Login</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={style.container}>
+        <Text style={style.login}>Login</Text>
 
-      <Text style={style.text}>Email</Text>
-      <TextInput
-        style={style.box}
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Enter your email"
-        keyboardType="email-address"
-      />
-      <View style={{ height: 20 }} />
+        <Text style={style.text}>Email</Text>
+        <TextInput
+          style={style.box}
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Enter your email"
+          keyboardType="email-address"
+        />
+        <View style={{ height: 20 }} />
 
-      <Text style={style.text}>Password</Text>
-      <TextInput
-        style={style.box}
-        value={password}
-        onChangeText={setPassword}
-        placeholder="Enter your password"
-        secureTextEntry
-      />
+        <Text style={style.text}>Password</Text>
+        <TextInput
+          style={style.box}
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Enter your password"
+          secureTextEntry
+        />
 
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={[style.forget, { flex: 2 }]}>Forget password?</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={[style.forget, { flex: 2 }]}>Forget password?</Text>
 
-        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-          <Text style={[style.forget, { color: 'blue', flex: 1 }]}>Register?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+            <Text style={[style.forget, { color: 'blue', flex: 1 }]}>Register?</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ height: 20 }} />
+        <TouchableOpacity style={style.button} onPress={handleLogin}>
+          <Text style={style.textinbox}>Sign in</Text>
         </TouchableOpacity>
       </View>
-
-      <View style={{ height: 20 }} />
-      <TouchableOpacity style={style.button} onPress={handleLogin}>
-        <Text style={style.textinbox}>Sign in</Text>
-      </TouchableOpacity>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -81,19 +83,15 @@ const style = StyleSheet.create({
     flexDirection:'column',
     justifyContent:'flex-start',
     alignItems:'flex-start',
-    borderWidth: 3,
-    borderColor: 'black',
-    height:"90%",
-    width:"auto",
-    minWidth:300,
-    padding:40,
-    margin:50,
+    height:"100%",
+    width:"100%",
+    padding:80,
   },
   box:{
     borderWidth: 2,
     borderColor: 'black',
-    height:35,
-    width:"100%",
+    height:50,
+    width:'100%',
     padding:10,
     marginVertical:5,
     fontSize:18,

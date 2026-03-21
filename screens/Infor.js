@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput,TouchableOpacity, justifyContent, alignItems, Button, Color, Alert, Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput,TouchableOpacity, TouchableWithoutFeedback, Keyboard, justifyContent, alignItems, Button, Color, Alert, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import { useState, useEffect } from 'react';
@@ -70,42 +70,44 @@ export default function Infor({navigation, route}) {
   });
   };
   return (
-    <View style={styles.container}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
 
-      <View style={{flexDirection:'row',alignItems:'center', justifyContent:'center',alignSelf:'center'}}>
-        <Text style={[styles.login]}>Who!</Text>
-        <TouchableOpacity style={[{width:100,height:100,borderWidth: 2,alignItems:'center',justifyContent:'center',}]} onPress={chonanh}>
-          <Image source={{uri:avatar}} style={{width:100,height:100}}/>
-        </TouchableOpacity>
+        <View style={{flexDirection:'row',alignItems:'center', justifyContent:'center',alignSelf:'center'}}>
+          <Text style={[styles.login]}>Who!</Text>
+          <TouchableOpacity style={[{width:100,height:100,borderWidth: 2,alignItems:'center',justifyContent:'center',}]} onPress={chonanh}>
+            <Image source={{uri:avatar}} style={{width:100,height:100}}/>
+          </TouchableOpacity>
+            
           
-        
+        </View>
+
+        <Text style={styles.text}>Name</Text>
+        <TextInput style={styles.box} value={username} onChangeText={setUsername}></TextInput>
+
+        <Text style={styles.text}>Email</Text>
+        <TextInput style={styles.box} value={email} onChangeText={setEmail}></TextInput>
+
+        <Text style={styles.text}>Address</Text>
+        <TextInput style={styles.box} value={address} onChangeText={setAddress}></TextInput>
+
+        <Text style={styles.text}>Avatar URL</Text>
+        <TextInput style={styles.box} value={avatar} onChangeText={setAvatar} onPress={chonanh} readOnly></TextInput>
+
+        <Text style={styles.text}>Description</Text>
+        <TextInput style={[styles.box,{height:150}]} value={des} onChangeText={setDes} multiline></TextInput>
+
+        <View style={{flexDirection:'row',justifyContent:'center',alignSelf:'center'}}>
+          <TouchableOpacity style={styles.button} onPress={handleSave}>
+            <Text style={styles.textinbox}>Save</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.button} onPress={handleLogout}>
+            <Text style={styles.textinbox}>Logout</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
-      <Text style={styles.text}>Name</Text>
-      <TextInput style={styles.box} value={username} onChangeText={setUsername}></TextInput>
-
-      <Text style={styles.text}>Email</Text>
-      <TextInput style={styles.box} value={email} onChangeText={setEmail}></TextInput>
-
-      <Text style={styles.text}>Address</Text>
-      <TextInput style={styles.box} value={address} onChangeText={setAddress}></TextInput>
-
-      <Text style={styles.text}>Avatar URL</Text>
-      <TextInput style={styles.box} value={avatar} onChangeText={setAvatar} onPress={chonanh} readOnly></TextInput>
-
-      <Text style={styles.text}>Description</Text>
-      <TextInput style={[styles.box,{height:150}]} value={des} onChangeText={setDes} multiline></TextInput>
-
-      <View style={{flexDirection:'row',justifyContent:'center',alignSelf:'center'}}>
-        <TouchableOpacity style={styles.button} onPress={handleSave}>
-          <Text style={styles.textinbox}>Save</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={handleLogout}>
-          <Text style={styles.textinbox}>Logout</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -117,12 +119,12 @@ const styles = StyleSheet.create({
     height:"90%",
     width:"auto",
     minWidth:300,
-    padding:40,
+    padding:60,
   },
   box:{
     borderWidth: 2,
     borderColor: 'black',
-    height:35,
+    height:50,
     width:"100%",
     padding:10,
     marginVertical:5,

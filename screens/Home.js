@@ -1,31 +1,48 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Alert, Image, Dimensions} from 'react-native';
 import { useState } from 'react';
+import React from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
-function Post({ID,Avatar,Username,UserId,Description,Source}){
-    const screenWidth = Dimensions.get('window').width;
-    const asset = Image.resolveAssetSource(Source);
-    const aspectRatio = asset.height / asset.width;
-    const imageHeight = screenWidth * aspectRatio;
+function formatTime(createdAt) {
+  if (!createdAt) return '';
+  
+  const now = new Date();
+  const postTime = new Date(createdAt);
+  const diff = now - postTime;
 
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+function Post({PostId,CreatedAt,Username,Avatar,UserId,Description,Picture,ImageHeight}){
     return(
         <View style={{backgroundColor:'white', marginVertical:1, width:'100%'}}>
             <View style={{flexDirection:'row', alignItems:'center', margin:10}}>
                 <Image source={Avatar} style={{width: 40, height: 40, borderRadius:90}}/>
                 <View style={{flexDirection:'column', marginLeft:10}}>
                     <Text style={{fontFamily:'Courier New', fontSize:25}}>{Username}</Text>
-                    <Text style={{fontFamily:'Courier New', fontSize:12}}>@UID_{UserId}</Text>
+                    <View style={{flexDirection:'row', alignItems:'center'}}>
+                        <Text style={{fontFamily:'Courier New', fontSize:12}}>@UID_{UserId}</Text>
+                        <Text> - {formatTime(CreatedAt)}</Text>
+                    </View>
                 </View>
                 
             </View>
             
             <Text style={{marginHorizontal:10, marginBottom:10}}>{Description}</Text>
             
-            <Image source={Source} style={{width:'100%', height: imageHeight, resizeMode:'contain'}}/>
+            <Image source={Picture} style={{width:'100%', height: ImageHeight, resizeMode:'contain'}}/>
 
             <View style={{flexDirection:'row', justifyContent:'flex-start', margin:10}}>
                 <TouchableOpacity style={{marginRight:10}}>
@@ -45,59 +62,42 @@ function Post({ID,Avatar,Username,UserId,Description,Source}){
 }
 
 export default function Home({navigation,route}){
-    const [crstate,setcrstate] = useState(0);
+    const [postsData, setPostdata] = useState([]);
 
-    const posts = [
-        {
-            id: 3,
-            avatar: require("../assets/PostImages/ava1.jpg"),
-            username: "Kimvux",
-            userid: "82765",
-            description: "Look at this!",
-            source: require("../assets/PostImages/zhao.png")
-        },
-        {
-            id: 1,
-            avatar: require("../assets/PostImages/ava2.jpg"),
-            username: "Kiệt",
-            userid: "12039",
-            description: "Ỏ...",
-            source: require("../assets/PostImages/orp.png")
-        },
-        {
-            id: 2,
-            avatar: require("../assets/PostImages/ava3.jpg"),
-            username: "Lân",
-            userid: "77233",
-            description: "Hello",
-            source: require("../assets/PostImages/belle.png")
-        },
-    ];
-
+    useFocusEffect(
+        React.useCallback(() => {
+            const loadpost = async() => {
+                const posts = await AsyncStorage.getItem('posts');
+                setPostdata(posts ? JSON.parse(posts) : []);
+            };
+            loadpost();
+        }, [])
+    );
+    
     return (
         <View style={style.container}>
-            {/**
-             * <View style={style.header}>
+            <View style={style.header}>
                 <Text style={style.techbook}>Techbook</Text>
                 <TouchableOpacity style={{}}>
                     <Image source={require("../assets/settings.png")}/>
                 </TouchableOpacity>
             </View>
-             */}
             
 
             <ScrollView style={{flex:1,width:'100%',backgroundColor:'lightgray'}}>
-                {crstate === 0 && posts.map(post => (
+                {postsData.map((post,index) => (
                     <Post
-                    key={post.id}
-                    ID={post.id}
-                    Avatar={post.avatar}
+                    key={index}
+                    PostId={post.postid}
+                    CreatedAt={post.createdAt}
+                    Avatar={{uri:post.avatar}}
                     Username={post.username}
-                    UserId={post.userid}
-                    Description={post.description}
-                    Source={post.source}
+                    UserId={post.userid || "unknown"}
+                    Description={post.des}
+                    Picture={{uri:post.picture}}
+                    ImageHeight={post.imageHeight}
                     />
-                ))}
+                ))}            
             </ScrollView>
             {/**
              * <View style={style.footer}>
@@ -144,9 +144,11 @@ const style = StyleSheet.create({
   header:{
     flexDirection:'row',
     justifyContent:'space-between',
+    alignItems:'center',
     width:'100%',
     borderBottomWidth:1,
-    paddingVertical:10,
+    paddingTop:60,
+    paddingBottom:10,
     paddingHorizontal:20
   },    
   footer:{

@@ -10,6 +10,7 @@ const Tab = createBottomTabNavigator();
 export default function MainScreen ({route}){
     return(
         <Tab.Navigator screenOptions={({route}) => ({
+            headerShown:false,
             tabBarIcon: ({ focused }) => {
                 if (route.name === "Home") {
                     return (

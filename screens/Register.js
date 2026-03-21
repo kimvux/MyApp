@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput,TouchableOpacity, justifyContent, alignItems, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput,TouchableOpacity, justifyContent, alignItems, Button, Alert, TouchableWithoutFeedback, Keyboard, } from 'react-native';
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -45,29 +45,31 @@ export default function Register({navigation}) {
     }
   };
   return (
-    <View style={style.container}>
-      <Text style={style.login}>Register</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={style.container}>
+        <Text style={style.login}>Register</Text>
 
-      <Text style={style.text}>Name</Text>
-      <TextInput style={style.box} value={username} onChangeText={setUsername}></TextInput>
-      <View style={{height:20}}></View>
+        <Text style={style.text}>Name</Text>
+        <TextInput style={style.box} value={username} onChangeText={setUsername}></TextInput>
+        <View style={{height:20}}></View>
 
-      <Text style={style.text}>Email</Text>
-      <TextInput style={style.box} value={email} onChangeText={setEmail}></TextInput>
-      <View style={{height:20}}></View>
+        <Text style={style.text}>Email</Text>
+        <TextInput style={style.box} value={email} onChangeText={setEmail}></TextInput>
+        <View style={{height:20}}></View>
 
-      <Text style={style.text}>Password</Text>
-      <TextInput style={style.box} value={password} onChangeText={setPassword}></TextInput>
-      <View style={{height:20}}></View>
+        <Text style={style.text}>Password</Text>
+        <TextInput style={style.box} value={password} onChangeText={setPassword}></TextInput>
+        <View style={{height:20}}></View>
 
-      <Text style={style.text}>Confirm Password</Text>
-      <TextInput style={style.box} value={cfpass} onChangeText={setCFPass}></TextInput>
-      <View style={{height:30}}></View>
+        <Text style={style.text}>Confirm Password</Text>
+        <TextInput style={style.box} value={cfpass} onChangeText={setCFPass}></TextInput>
+        <View style={{height:30}}></View>
 
-      <TouchableOpacity style={style.button} onPress={register}>
-        <Text style={style.textinbox}>Create</Text> 
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={style.button} onPress={register}>
+          <Text style={style.textinbox}>Create</Text> 
+        </TouchableOpacity>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -76,18 +78,14 @@ const style = StyleSheet.create({
     flexDirection:'column',
     justifyContent:'flex-start',
     alignItems:'flex-start',
-    borderWidth: 3,
-    borderColor: 'black',
-    height:"90%",
-    width:"auto",
-    minWidth:300,
-    padding:40,
-    margin:50,
+    height:"100%",
+    width:"100%",
+    padding:80,
   },
   box:{
     borderWidth: 2,
     borderColor: 'black',
-    height:35,
+    height:50,
     width:"100%",
     padding:10,
     marginVertical:3,
