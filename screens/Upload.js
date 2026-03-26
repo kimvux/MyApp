@@ -43,8 +43,7 @@ export default function Upload({navigation,route}){
           const screenWidth = Dimensions.get('window').width;
           const asset = Image.resolveAssetSource(result.assets[0]);
           const aspectRatio = asset.height / asset.width;
-          const actualHeight = screenWidth * aspectRatio > 400 ? 400 : screenWidth * aspectRatio;
-          setImageheight(actualHeight);
+          setImageheight(screenWidth * aspectRatio);
         }
       };
 
@@ -66,7 +65,7 @@ export default function Upload({navigation,route}){
           picture:picture,
           imageHeight:imageHeight,
         };
-        posts.push(post);
+        posts.unshift(post);
         await AsyncStorage.setItem('posts', JSON.stringify(posts));
         Alert.alert('Success', 'Posted successful');
         setImageheight(0);
@@ -101,7 +100,7 @@ export default function Upload({navigation,route}){
                 <Text style={{fontFamily:'Courier New', fontSize:25, marginLeft:10}}>{username}</Text>
             </View>
 
-            <Image source={{uri:picture}} style={{width:'100%', height:imageHeight, resizeMode:'contain'}}/>
+            <Image source={{uri:picture}} style={{width:'100%', height:imageHeight > 400 ? 400 : imageHeight, resizeMode:'contain'}}/>
 
             <TextInput style={[styles.box,{height:150,flex:1}]} placeholder="What's on your mind?" value={des} onChangeText={setDes} multiline></TextInput>
             

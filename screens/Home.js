@@ -9,7 +9,7 @@ const Tab = createBottomTabNavigator();
 
 function formatTime(createdAt) {
   if (!createdAt) return '';
-  
+
   const now = new Date();
   const postTime = new Date(createdAt);
   const diff = now - postTime;
@@ -33,8 +33,8 @@ function Post({PostId,CreatedAt,Username,Avatar,UserId,Description,Picture,Image
                 <View style={{flexDirection:'column', marginLeft:10}}>
                     <Text style={{fontFamily:'Courier New', fontSize:25}}>{Username}</Text>
                     <View style={{flexDirection:'row', alignItems:'center'}}>
-                        <Text style={{fontFamily:'Courier New', fontSize:12}}>@UID_{UserId}</Text>
-                        <Text> - {formatTime(CreatedAt)}</Text>
+                        <Text style={{fontFamily:'Courier New', fontSize:12}}>@UID_{UserId} - </Text>
+                        <Text style={{fontFamily:'Courier New', fontSize:12}}>{formatTime(CreatedAt)}</Text>
                     </View>
                 </View>
                 
@@ -77,7 +77,7 @@ export default function Home({navigation,route}){
     return (
         <View style={style.container}>
             <View style={style.header}>
-                <Text style={style.techbook}>Techbook</Text>
+                <Text style={style.techbook}>fakebook</Text>
                 <TouchableOpacity style={{}}>
                     <Image source={require("../assets/settings.png")}/>
                 </TouchableOpacity>
@@ -134,6 +134,7 @@ const style = StyleSheet.create({
     alignItems:'flex-start',
     height:'100%',
     minWidth:300,
+    backgroundColor:'white'
   },
   techbook:{
     fontFamily:'Courier New',
