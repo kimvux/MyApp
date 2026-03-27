@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
     height:"100%",
     width:"100%",
     paddingTop:70,
-    paddingHorizontal:20
+    paddingHorizontal:20,
+    backgroundColor:'white'
   },
   box:{
     width:"100%",

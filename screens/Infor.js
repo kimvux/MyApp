@@ -116,10 +116,11 @@ const styles = StyleSheet.create({
     flexDirection:'column',
     justifyContent:'flex-start',
     alignItems:'flex-start',
-    height:"90%",
-    width:"auto",
+    height:"100%",
+    width:"100%",
     minWidth:300,
     padding:60,
+    backgroundColor:'white'
   },
   box:{
     borderWidth: 2,

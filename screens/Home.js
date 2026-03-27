@@ -79,7 +79,7 @@ export default function Home({navigation,route}){
             <View style={style.header}>
                 <Text style={style.techbook}>fakebook</Text>
                 <TouchableOpacity style={{}}>
-                    <Image source={require("../assets/settings.png")}/>
+                    <Image source={require("../assets/search.png")}/>
                 </TouchableOpacity>
             </View>
             
@@ -99,31 +99,6 @@ export default function Home({navigation,route}){
                     />
                 ))}            
             </ScrollView>
-            {/**
-             * <View style={style.footer}>
-                <TouchableOpacity onPress={() => setcrstate(0)}>
-                    <Image source={crstate === 0 ? require("../assets/home_solid.png") : require("../assets/home.png")}/>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => setcrstate(1)}>
-                    <Image source={crstate === 1 ? require("../assets/search_solid.png") : require("../assets/search.png")}/>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => setcrstate(2)}>
-                    <Image source={crstate === 2 ? require("../assets/add_solid.png") : require("../assets/add.png")}/>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => setcrstate(3)}>
-                    <Image source={crstate === 3 ? require("../assets/bell_solid.png") : require("../assets/bell.png")}/>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => {setcrstate(4); navigation.navigate("Infor",{email:route.params?.email})}}>
-                    <Image source={crstate === 4 ? require("../assets/user_solid.png") : require("../assets/user.png")}/>
-                </TouchableOpacity>
-            </View>
-             */}
-            
-            
         </View>
     )
 }

@@ -5,6 +5,8 @@ import Home from "./Home";
 import Infor from './Infor';
 import Upload from './Upload';
 
+import Nothing from './Nothing';
+
 const Tab = createBottomTabNavigator();
 
 export default function MainScreen ({route}){
@@ -24,6 +26,18 @@ export default function MainScreen ({route}){
                     />
                     );
                 }
+                else if (route.name === "Friends") {
+                    return (
+                    <Image
+                        source={
+                        focused
+                            ? require("../assets/followers_solid.png")
+                            : require("../assets/followers.png")
+                        }
+                        style={{ width: 24, height: 24 }}
+                    />
+                    );
+                }
                 else if (route.name === "Infor") {
                     return (
                     <Image
@@ -31,6 +45,18 @@ export default function MainScreen ({route}){
                         focused
                             ? require("../assets/user_solid.png")
                             : require("../assets/user.png")
+                        }
+                        style={{ width: 24, height: 24 }}
+                    />
+                    );
+                }
+                else if (route.name === "Notification") {
+                    return (
+                    <Image
+                        source={
+                        focused
+                            ? require("../assets/bell_solid.png")
+                            : require("../assets/bell.png")
                         }
                         style={{ width: 24, height: 24 }}
                     />
@@ -51,7 +77,9 @@ export default function MainScreen ({route}){
             },
         })}>
             <Tab.Screen name='Home' component={Home} initialParams={{ email: route.params.email }}/>
+            <Tab.Screen name='Friends' component={Nothing} initialParams={{ email: route.params.email }}/>
             <Tab.Screen name='Upload' component={Upload} initialParams={{ email: route.params.email }}/>
+            <Tab.Screen name='Notification' component={Nothing} initialParams={{ email: route.params.email }}/>
             <Tab.Screen name='Infor' component={Infor} initialParams={{ email: route.params.email }}/>
         </Tab.Navigator>
     )
