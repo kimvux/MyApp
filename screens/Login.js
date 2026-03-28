@@ -1,17 +1,19 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, } from 'react-native';
 import { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getDB } from '../database/db';
 
 export default function Login({ navigation,route }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [db, setDb] = useState(null);
 
   useEffect(() => {
-      if(route.params?.user){
-        setEmail(route.params.user.email);
-        setPassword(route.params.user.password);
-      }
-    }, []);
+    const setupdb = async() => {
+      const db = await getDB();
+      setDb(db);
+    }
+    setupdb();
+  }, []);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -19,21 +21,20 @@ export default function Login({ navigation,route }) {
       return;
     }
     try {
-      const usersData = await AsyncStorage.getItem('users');
-      if (usersData) {
-        const users = JSON.parse(usersData);
-        const user = users.find(u => u.email === email && u.password === password);
-        if (user) {
-          Alert.alert('Success', 'Login successful');
-          navigation.replace('MainScreen', { email : user.email });
-        } else {
-          Alert.alert('Error', 'Invalid email or password');
-        }
-      } else {
-        Alert.alert('Error', 'No users found. Please register first.');
+      const result = await db.getFirstAsync(
+        `select id from Users where email = ? and password = ?;`,
+        [email,password]
+      );
+      if (result !== null){
+        navigation.replace('MainScreen',{id:result.id});
       }
-    } catch (error) {
+      else {
+        Alert.alert('Error', 'Invalid email or password');
+      }
+    } 
+    catch (error) {
       Alert.alert('Error', 'Failed to load data');
+      console.error("lỗi:",error);
     }
   };
 

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TextInput,TouchableOpacity, TouchableWithoutFeedback, Keyboard, justifyContent, alignItems, Button, Color, Alert, Image } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import { useState, useEffect } from 'react';
+import { getUsersData, getDB, updateUser,createTable } from '../database/db';
 
 export default function Infor({navigation, route}) {
   const [username, setUsername] = useState("");
@@ -9,25 +9,32 @@ export default function Infor({navigation, route}) {
   const [address, setAddress] = useState("");
   const [avatar, setAvatar] = useState("");
   const [des, setDes] = useState("");
-  
-  
+  const [db, setDb] = useState(null);
+
+  useEffect(() => {
+    const setupdb = async() => {
+      const db = await getDB();
+      setDb(db);
+    }
+    setupdb();
+  }, []);
+
   useEffect(() => {
     const loaduser = async() => {
-      if (route.params?.email){
-        const usersData = await AsyncStorage.getItem('users');
-        const users = JSON.parse(usersData);
-        const user = users.find(u => u.email === route.params.email);
+      if (route.params?.id && db){
+        const users = await getUsersData(db); 
+        const user = users.find(u => u.id === route.params.id);
         if (user){
-          setUsername(user.username);
+          setUsername(user.name);
           setEmail(user.email);
           setAddress(user.address);
           setAvatar(user.avatar);
-          setDes(user.des);
+          setDes(user.description);
         }
       }
     };
     loaduser();
-  }, []);
+  },[db, route.params?.id])
 
   const chonanh = async() => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -42,23 +49,10 @@ export default function Infor({navigation, route}) {
 
   const handleSave = async () => {
     try {
-      const usersData = await AsyncStorage.getItem('users');
-      const users = JSON.parse(usersData);
-      const userIndex = users.findIndex(u => u.email === route.params.email);
-      
-      if (userIndex !== -1) {
-        users[userIndex] = {
-          username: username,
-          password: users[userIndex].password,
-          email:email,
-          address:address,
-          avatar:avatar,
-          des:des
-        };
-        await AsyncStorage.setItem('users', JSON.stringify(users));
-        Alert.alert('Thành công', 'Cập nhật thông tin thành công');
-      }
-    } catch (error) {
+      await updateUser(db,route.params?.id,username,email,address,avatar,des);
+      Alert.alert('Thành công', 'Cập nhật thông tin thành công');
+    } 
+    catch (error) {
       Alert.alert('Lỗi', 'Không thể cập nhật thông tin');
     }
   };

@@ -1,12 +1,22 @@
 import { StyleSheet, Text, View, TextInput,TouchableOpacity, justifyContent, alignItems, Button, Alert, TouchableWithoutFeedback, Keyboard, } from 'react-native';
-import { useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState,useEffect } from 'react';
+import { getDB, insertUser } from '../database/db';
 
 export default function Register({navigation}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [cfpass, setCFPass] = useState("");
+
+  const [db, setDb] = useState(null);
+
+  useEffect(() => {
+    const setupdb = async() => {
+      const db = await getDB();
+      setDb(db);
+    }
+    setupdb();
+  }, [])
 
   const register = async () => {
 
@@ -19,28 +29,27 @@ export default function Register({navigation}) {
       return;
     }
     try {
-      const usersData = await AsyncStorage.getItem('users');
-      const users = usersData ? JSON.parse(usersData) : [];
+      
+      const result = await db.getFirstAsync(
+        `select email from Users where email = ?`,
+        [email]
+      );
 
-      const existingUser = users.find(user => user.email === email);
-      if (existingUser) {
+      if (result == null){
+        await insertUser(db,username,password,email,'','','');
+        Alert.alert('Success', 'Registration successful');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Login" }],
+        });
+      }
+
+      else {
         Alert.alert('Error', 'Email already registered');
         return;
       }
-
-      const user = {
-        username: username,
-        password: password,
-        email:email,
-        address: null,
-        avatar: null,
-        des: null,
-      };
-      users.push(user);
-      await AsyncStorage.setItem('users', JSON.stringify(users));
-      Alert.alert('Success', 'Registration successful');
-      navigation.navigate('Login',{user:user});
-    } catch (error) {
+    }
+    catch (error) {
       Alert.alert('Error', 'Failed to save data');
     }
   };

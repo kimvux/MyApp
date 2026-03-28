@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Alert, Image, Dimensions} from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import React from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { getPostsData, getDB } from '../database/db';
 
 const Tab = createBottomTabNavigator();
 
@@ -63,12 +63,15 @@ function Post({PostId,CreatedAt,Username,Avatar,UserId,Description,Picture,Image
 
 export default function Home({navigation,route}){
     const [postsData, setPostdata] = useState([]);
+    const [db, setDb] = useState(null);
 
     useFocusEffect(
         React.useCallback(() => {
             const loadpost = async() => {
-                const posts = await AsyncStorage.getItem('posts');
-                setPostdata(posts ? JSON.parse(posts) : []);
+                const db = await getDB();
+                setDb(db);
+                const posts = await getPostsData(db);
+                setPostdata(posts);
             };
             loadpost();
         }, [])
@@ -91,7 +94,7 @@ export default function Home({navigation,route}){
                     PostId={post.postid}
                     CreatedAt={post.createdAt}
                     Avatar={{uri:post.avatar}}
-                    Username={post.username}
+                    Username={post.name}
                     UserId={post.userid || "unknown"}
                     Description={post.des}
                     Picture={{uri:post.picture}}

@@ -4,33 +4,45 @@ import React from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
+import { getDB, getUsersData, insertPost } from '../database/db';
 
 export default function Upload({navigation,route}){
     const [username, setUsername] = useState("");
     const [avatar, setAvatar] = useState("");
-
     const [picture, setPicture] = useState("");
     const [des, setDes] = useState("");
     const [imageHeight, setImageheight] = useState("");
 
+    const [db, setDb] = useState(null);
+
+    useEffect(() => {
+      const setupdb = async() => {
+        const db = await getDB();
+        setDb(db);
+      }
+      setupdb();
+    }, []);
+
     useFocusEffect(
       React.useCallback(() => {
         const loaduser = async() => {
-          if (route.params?.email){
-            const usersData = await AsyncStorage.getItem('users');
-            const users = JSON.parse(usersData);
-            const user = users.find(u => u.email === route.params.email);
-            if (user){
-              setUsername(user.username);
-              setAvatar(user.avatar);
-              setImageheight(0);
+          if (route.params?.id && db){
+            try{
+              const usersData = await getUsersData(db);
+              const user = usersData.find(u => u.id === route.params.id);
+              if (user){
+                setUsername(user.name);
+                setAvatar(user.avatar);
+                setImageheight(0);
+              }
+            }
+            catch(error){
+              console.error("Lỗi post bài: ",error);
             }
           }
-          else 
-            Alert.alert('Error', 'Failed to load data');
-        };
+        }
       loaduser();
-      }, [])
+      }, [db, route.params.id])
     );
 
     const chonanh = async() => {
@@ -53,24 +65,11 @@ export default function Upload({navigation,route}){
         return;
       }
       try {
-        const postsData = await AsyncStorage.getItem('posts');
-        const posts = postsData ? JSON.parse(postsData) : [];
-
-        const post = {
-          postid:"",
-          createdAt: new Date().toISOString(),
-          username: username,
-          avatar:avatar,
-          des: des,
-          picture:picture,
-          imageHeight:imageHeight,
-        };
-        posts.unshift(post);
-        await AsyncStorage.setItem('posts', JSON.stringify(posts));
+        await insertPost(db,route.params.id,des,picture,imageHeight,new Date().toISOString());
         Alert.alert('Success', 'Posted successful');
         setImageheight(0);
         setDes("");
-        setPicture(null);
+        setPicture("");
         navigation.navigate('Home');
       }
       catch (error) {
@@ -81,9 +80,15 @@ export default function Upload({navigation,route}){
     const cancel = async() => {
       setImageheight(0);
       setDes("");
-      setPicture(null);
+      setPicture("");
       navigation.navigate('Home');
     };
+
+    const xoaanh = async() => {
+      setPicture("");
+      setImageheight(0);
+    }
+    
     return(
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
@@ -100,19 +105,27 @@ export default function Upload({navigation,route}){
                 <Text style={{fontFamily:'Courier New', fontSize:25, marginLeft:10}}>{username}</Text>
             </View>
 
+            {picture !== "" && (
+              <TouchableOpacity style={{flexDirection:'row', alignItems:'center',marginBottom:10}} onPress={xoaanh}>
+                <Image style={{width:6, height:6}} source={require("../assets/cross.png")}/>
+                <Text style={[styles.text,{fontSize:15,color:'gray'}]}> Remove picture</Text>
+              </TouchableOpacity>
+            )}
+
             <Image source={{uri:picture}} style={{width:'100%', height:imageHeight > 400 ? 400 : imageHeight, resizeMode:'contain'}}/>
 
-            <TextInput style={[styles.box,{height:150,flex:1}]} placeholder="What's on your mind?" value={des} onChangeText={setDes} multiline></TextInput>
+            <TextInput style={[styles.box,{height:150,flex:1,marginTop:10}]} placeholder="What's on your mind?" value={des} onChangeText={setDes} multiline></TextInput>
             
-            <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%',padding:20}}>
-              <TouchableOpacity style={{flexDirection:'row', alignItems:'center'}} onPress={chonanh}>
+            <View style={{flexDirection:'row', alignItems:'center', marginVertical:20, justifyContent:'space-between', width:'100%'}}>
+              <TouchableOpacity style={{flexDirection:'row', alignItems:'center',marginVertical:10}} onPress={chonanh}>
                 <Image source={require("../assets/picture.png")}/>
                 <Text style={styles.text}> Add picture</Text>
               </TouchableOpacity> 
-              <TouchableOpacity style={{flexDirection:'row', alignItems:'center'}} onPress={post}>
+
+              <TouchableOpacity style={{flexDirection:'row', alignItems:'center',alignSelf:'flex-end', padding:10, backgroundColor:'#EDEDED', borderRadius:20}} onPress={post}>
                 <Image source={require("../assets/post.png")}/>
                 <Text style={styles.text}> Post</Text>
-              </TouchableOpacity>
+            </TouchableOpacity>
             </View>
             
         </View>

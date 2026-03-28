@@ -76,11 +76,11 @@ export default function MainScreen ({route}){
                 }
             },
         })}>
-            <Tab.Screen name='Home' component={Home} initialParams={{ email: route.params.email }}/>
-            <Tab.Screen name='Friends' component={Nothing} initialParams={{ email: route.params.email }}/>
-            <Tab.Screen name='Upload' component={Upload} initialParams={{ email: route.params.email }}/>
-            <Tab.Screen name='Notification' component={Nothing} initialParams={{ email: route.params.email }}/>
-            <Tab.Screen name='Infor' component={Infor} initialParams={{ email: route.params.email }}/>
+            <Tab.Screen name='Home' component={Home} initialParams={{ id: route.params.id }}/>
+            <Tab.Screen name='Friends' component={Nothing} initialParams={{ id: route.params.id }}/>
+            <Tab.Screen name='Upload' component={Upload} initialParams={{ id: route.params.id }}/>
+            <Tab.Screen name='Notification' component={Nothing} initialParams={{ id: route.params.id }}/>
+            <Tab.Screen name='Infor' component={Infor} initialParams={{ id: route.params.id }}/>
         </Tab.Navigator>
     )
 };
