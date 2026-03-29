@@ -114,7 +114,7 @@ export default function Upload({navigation,route}){
 
             <Image source={{uri:picture}} style={{width:'100%', height:imageHeight > 400 ? 400 : imageHeight, resizeMode:'contain'}}/>
 
-            <TextInput style={[styles.box,{height:150,flex:1,marginTop:10}]} placeholder="What's on your mind?" value={des} onChangeText={setDes} multiline></TextInput>
+            <TextInput style={styles.box} placeholder="What's on your mind?" value={des} onChangeText={setDes} multiline></TextInput>
             
             <View style={{flexDirection:'row', alignItems:'center', marginVertical:20, justifyContent:'space-between', width:'100%'}}>
               <TouchableOpacity style={{flexDirection:'row', alignItems:'center',marginVertical:10}} onPress={chonanh}>
@@ -144,9 +144,13 @@ const styles = StyleSheet.create({
     backgroundColor:'white'
   },
   box:{
+    textAlignVertical:'top',
     width:"100%",
     fontSize:18,
     fontWeight:'bold',
+    height:150,
+    flex:1,
+    marginTop:10
   },
   header:{
     alignSelf:'center',

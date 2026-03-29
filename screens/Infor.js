@@ -89,7 +89,7 @@ export default function Infor({navigation, route}) {
         <TextInput style={styles.box} value={avatar} onChangeText={setAvatar} onPress={chonanh} readOnly></TextInput>
 
         <Text style={styles.text}>Description</Text>
-        <TextInput style={[styles.box,{height:150}]} value={des} onChangeText={setDes} multiline></TextInput>
+        <TextInput style={[styles.box,{height:150,textAlignVertical:'top'}]} value={des} onChangeText={setDes} multiline></TextInput>
 
         <View style={{flexDirection:'row',justifyContent:'center',alignSelf:'center'}}>
           <TouchableOpacity style={styles.button} onPress={handleSave}>

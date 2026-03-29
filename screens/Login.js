@@ -1,16 +1,22 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, } from 'react-native';
 import { useState, useEffect } from 'react';
-import { getDB } from '../database/db';
+import { getDB,clearAllData } from '../database/db';
 
 export default function Login({ navigation,route }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [db, setDb] = useState(null);
 
+  const handleClear = async () => {
+    await clearAllData(db);
+    console.log("Đã xóa hết data");
+  };
+
   useEffect(() => {
     const setupdb = async() => {
-      const db = await getDB();
-      setDb(db);
+      const database = await getDB();
+      setDb(database);
+      console.log("Login sẵn sàng");
     }
     setupdb();
   }, []);
@@ -18,6 +24,10 @@ export default function Login({ navigation,route }) {
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please enter email and password');
+      return;
+    }
+    if (!db){
+      console.error("DB đâu?");
       return;
     }
     try {
@@ -74,6 +84,12 @@ export default function Login({ navigation,route }) {
         <TouchableOpacity style={style.button} onPress={handleLogin}>
           <Text style={style.textinbox}>Sign in</Text>
         </TouchableOpacity>
+        {/**
+         * <TouchableOpacity style={style.button} onPress={handleClear}>
+              <Text style={style.textinbox}>clear</Text>
+            </TouchableOpacity>
+         */}
+        
       </View>
     </TouchableWithoutFeedback>
   );

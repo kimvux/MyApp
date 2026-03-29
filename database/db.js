@@ -1,15 +1,33 @@
 import * as SQLite from 'expo-sqlite';
 
+let dbInstance = null;
+
 export const getDB = async() => {
     try{
-        const db = await SQLite.openDatabaseAsync('data.db');
-        return db;
+        if (!dbInstance){
+            dbInstance = await SQLite.openDatabaseAsync('data.db');
+        }
+        return dbInstance;
     }
     catch(error){
         console.error("Lỗi kết nối Database:", error);
         throw error;
     }
 }
+
+export const clearAllData = async (db) => {
+  await db.withTransactionAsync(async () => {
+    await db.execAsync(`
+        DELETE FROM comments;
+        DELETE FROM posts;
+        DELETE FROM users;
+        DROP TABLE IF EXISTS Comments;
+        DROP TABLE IF EXISTS Posts;
+        DROP TABLE IF EXISTS Users;
+    `);
+    createTable(db);
+  });
+};
 
 export const createTable = async(db) => {
     try{
@@ -118,8 +136,9 @@ export const insertComment = async(db, postid, userid, comment, createdAt) => {
     try{
         await db.runAsync(
             `insert into Comments (postid, userid, comment, createdAt) values (?,?,?,?);`,
-            [postid, userid, comment, picture, createdAt]
+            [postid, userid, comment, createdAt]
         );
+        console.log("Comment thành công");
     }
     catch(error){
         console.error("Lỗi khi thêm Comments:", error);
@@ -129,10 +148,10 @@ export const insertComment = async(db, postid, userid, comment, createdAt) => {
 export const getCommentsForPost = async(db, postid) => {
     try{
         const comments = await db.getAllAsync(
-            `select * 
+            `select c.comment, u.name, u.avatar, c.createdAt
             from Comments c join Posts p on c.postid = p.postid
                 join Users u on u.id = c.userid
-            where postid = ?
+            where p.postid = ?
             order by c.createdAt desc;`,
             [postid]
         );
