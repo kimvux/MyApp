@@ -31,7 +31,8 @@ export default function Login({ navigation,route }) {
       return;
     }
     try {
-      const result = await db.getFirstAsync(
+      {/**
+        const result = await db.getFirstAsync(
         `select id from Users where email = ? and password = ?;`,
         [email,password]
       );
@@ -40,6 +41,15 @@ export default function Login({ navigation,route }) {
       }
       else {
         Alert.alert('Error', 'Invalid email or password');
+      }
+         */}
+      const res = await fetch(`http://blackntt.net:4321/login?email=${email}&password=${password}`,{
+        method:'POST',
+      });
+      
+      if(res.ok){
+        const data = await res.json();
+        navigation.replace('MainScreen',{id:email,name:data.name});
       }
     } 
     catch (error) {

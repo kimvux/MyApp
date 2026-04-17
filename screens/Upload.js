@@ -10,19 +10,30 @@ export default function Upload({navigation,route}){
     const [username, setUsername] = useState("");
     const [avatar, setAvatar] = useState("");
     const [picture, setPicture] = useState("");
+    const [title,setTitle] = useState("");
     const [des, setDes] = useState("");
     const [imageHeight, setImageheight] = useState("");
-
+    const [email,setEmail] = useState("");
+    
     const [db, setDb] = useState(null);
 
     useEffect(() => {
+      /*
       const setupdb = async() => {
         const db = await getDB();
         setDb(db);
       }
       setupdb();
+      */
+      const loaduser = async() => {
+        if (route.params?.id){
+          setEmail(route.params.id);
+          setUsername(route.params.name);
+        }
+      }
+      loaduser();
     }, []);
-
+    /*
     useFocusEffect(
       React.useCallback(() => {
         const loaduser = async() => {
@@ -33,6 +44,7 @@ export default function Upload({navigation,route}){
               if (user){
                 setUsername(user.name);
                 setAvatar(user.avatar);
+                setEmail(user.email);
                 setImageheight(0);
               }
             }
@@ -44,6 +56,7 @@ export default function Upload({navigation,route}){
       loaduser();
       }, [db, route.params.id])
     );
+    
 
     const chonanh = async() => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -58,19 +71,34 @@ export default function Upload({navigation,route}){
           setImageheight(screenWidth * aspectRatio);
         }
       };
+    */
 
     const post = async() => {
-      if (!des && !picture){
+      if (!des && !title){
         Alert.alert('Hmmm...', 'Anything to say?');
         return;
       }
       try {
+        /*
         await insertPost(db,route.params.id,des,picture,imageHeight,new Date().toISOString());
         Alert.alert('Success', 'Posted successful');
         setImageheight(0);
         setDes("");
         setPicture("");
         navigation.navigate('Home');
+        */
+        const res = await fetch(`http://blackntt.net:4321/posts`,{
+          method:'POST',
+          headers:{ 'Content-Type': 'application/json' },
+          body:JSON.stringify({title:title,description:des,creator_email:email})
+        })
+        if(res.ok){
+          Alert.alert('Success', 'Posted successful');
+          setImageheight(0);
+          setDes("");
+          setPicture("");
+          navigation.navigate('Home');
+        }
       }
       catch (error) {
         Alert.alert('Error', 'Failed to post');
@@ -114,13 +142,15 @@ export default function Upload({navigation,route}){
 
             <Image source={{uri:picture}} style={{width:'100%', height:imageHeight > 400 ? 400 : imageHeight, resizeMode:'contain'}}/>
 
+            <TextInput style={styles.box} placeholder="Title" value={title} onChangeText={setTitle} multiline></TextInput>
             <TextInput style={styles.box} placeholder="What's on your mind?" value={des} onChangeText={setDes} multiline></TextInput>
             
             <View style={{flexDirection:'row', alignItems:'center', marginVertical:20, justifyContent:'space-between', width:'100%'}}>
-              <TouchableOpacity style={{flexDirection:'row', alignItems:'center',marginVertical:10}} onPress={chonanh}>
+            
+              {/*<TouchableOpacity style={{flexDirection:'row', alignItems:'center',marginVertical:10}} onPress={chonanh}>
                 <Image source={require("../assets/picture.png")}/>
                 <Text style={styles.text}> Add picture</Text>
-              </TouchableOpacity> 
+              </TouchableOpacity> */}
 
               <TouchableOpacity style={{flexDirection:'row', alignItems:'center',alignSelf:'flex-end', padding:10, backgroundColor:'#EDEDED', borderRadius:20}} onPress={post}>
                 <Image source={require("../assets/post.png")}/>

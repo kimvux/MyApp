@@ -11,6 +11,7 @@ export default function Infor({navigation, route}) {
   const [des, setDes] = useState("");
   const [db, setDb] = useState(null);
 
+  /*
   useEffect(() => {
     const setupdb = async() => {
       const db = await getDB();
@@ -18,10 +19,12 @@ export default function Infor({navigation, route}) {
     }
     setupdb();
   }, []);
+  */
 
   useEffect(() => {
     const loaduser = async() => {
-      if (route.params?.id && db){
+      if (route.params?.id){
+        /*
         const users = await getUsersData(db); 
         const user = users.find(u => u.id === route.params.id);
         if (user){
@@ -31,6 +34,9 @@ export default function Infor({navigation, route}) {
           setAvatar(user.avatar);
           setDes(user.description);
         }
+        */
+        setUsername(route.params.name);
+        setEmail(route.params.id);
       }
     };
     loaduser();
@@ -69,7 +75,7 @@ export default function Infor({navigation, route}) {
 
         <View style={{flexDirection:'row',alignItems:'center', justifyContent:'center',alignSelf:'center'}}>
           <Text style={[styles.login]}>Who!</Text>
-          <TouchableOpacity style={[{width:100,height:100,borderWidth: 2,alignItems:'center',justifyContent:'center',}]} onPress={chonanh}>
+          <TouchableOpacity style={[{width:100,height:100,borderWidth: 2,alignItems:'center',justifyContent:'center',}]} /*onPress={chonanh}*/>
             <Image source={{uri:avatar}} style={{width:100,height:100}}/>
           </TouchableOpacity>
             
@@ -86,13 +92,13 @@ export default function Infor({navigation, route}) {
         <TextInput style={styles.box} value={address} onChangeText={setAddress}></TextInput>
 
         <Text style={styles.text}>Avatar URL</Text>
-        <TextInput style={styles.box} value={avatar} onChangeText={setAvatar} onPress={chonanh} readOnly></TextInput>
+        <TextInput style={styles.box} value={avatar} onChangeText={setAvatar} /*onPress={chonanh}*/ readOnly></TextInput>
 
         <Text style={styles.text}>Description</Text>
         <TextInput style={[styles.box,{height:150,textAlignVertical:'top'}]} value={des} onChangeText={setDes} multiline></TextInput>
 
         <View style={{flexDirection:'row',justifyContent:'center',alignSelf:'center'}}>
-          <TouchableOpacity style={styles.button} onPress={handleSave}>
+          <TouchableOpacity style={styles.button} /*onPress={handleSave}*/>
             <Text style={styles.textinbox}>Save</Text>
           </TouchableOpacity>
 

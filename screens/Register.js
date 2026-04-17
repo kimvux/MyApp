@@ -29,8 +29,8 @@ export default function Register({navigation}) {
       return;
     }
     try {
-      
-      const result = await db.getFirstAsync(
+      {/**
+        const result = await db.getFirstAsync(
         `select email from Users where email = ?`,
         [email]
       );
@@ -47,6 +47,23 @@ export default function Register({navigation}) {
       else {
         Alert.alert('Error', 'Email already registered');
         return;
+      }
+         */}
+      const res = await fetch('http://blackntt.net:4321/register',{
+        method:'POST',
+        headers:{ 'Content-Type': 'application/json' },
+        body: JSON.stringify({email:email,password:password,name:username,description:""}),
+      });
+
+      if(res.ok){
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Login" }],
+        });
+      }
+      else{
+        const me = await res.json();
+        Alert.alert('Lỗi', me.message);
       }
     }
     catch (error) {

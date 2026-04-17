@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, Alert} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export function formatTime(createdAt) {
@@ -48,22 +48,63 @@ export function CommentView({CreatedAt,Username,Avatar,Comment}){
     )
 }
 
-export function Post({PostId,CreatedAt,Username,Avatar,UserId,Description,Picture,ImageHeight,Myid}){
+export function Post({PostId,CreatedAt,Username,Avatar,UserId,Description,Picture,ImageHeight,Myid,Title}){
     const navigation = useNavigation();
+
+    const deletepost = async() => {
+        try{
+            Alert.alert(
+                'Xoá bài viết',
+                'Bạn có chắc muốn xoá bài này không?',
+                [
+                {
+                    text: 'Không',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Có',
+                    style: 'destructive',
+                    onPress: async () => {
+                        const res = await fetch(`http://blackntt.net:4321/posts/${PostId}`,{method:'DELETE'});
+                        if (res.ok){
+                            console.log("Đã xóa post");
+                        }
+                        else{
+                            console.log("Lỗi khi xóa post");
+                        }
+                    },
+                },
+                ]
+            );
+        }   
+        catch(error){
+            console.error("Lỗi xóa post: ",error);
+        }
+    }
+
     return(
         <View style={{backgroundColor:'white', marginVertical:1, width:'100%'}}>
-            <View style={{flexDirection:'row', alignItems:'center', margin:10}}>
-                <Image source={Avatar} style={{width: 40, height: 40, borderRadius:90}}/>
-                <View style={{flexDirection:'column', marginLeft:10}}>
-                    <Text style={{fontFamily:'Courier New', fontSize:25}}>{Username}</Text>
-                    <View style={{flexDirection:'row', alignItems:'center'}}>
-                        <Text style={{fontFamily:'Courier New', fontSize:12}}>@UID_{UserId} - </Text>
-                        <Text style={{fontFamily:'Courier New', fontSize:12}}>{formatTime(CreatedAt)}</Text>
+            <View style={{flexDirection:'row', alignItems:'center',justifyContent:'space-between', margin:10}}>
+                <View style={{flexDirection:'row', alignItems:'center'}}>
+                    {/*<Image source={Avatar} style={{width: 40, height: 40, borderRadius:90}}/>*/}
+                    <View style={{flexDirection:'column'}}>
+                        <Text style={{fontFamily:'Courier New', fontSize:26}}>{Username}</Text>
+                        <Text style={{fontFamily:'Courier New', fontSize:8}}>@Email_{UserId}</Text>
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <Text style={{fontFamily:'Courier New', fontSize:10}}>@PostID_{PostId} - </Text>
+                            <Text style={{fontFamily:'Courier New', fontSize:13}}>{formatTime(CreatedAt)}</Text>
+                        </View>
                     </View>
                 </View>
+                
+                <TouchableOpacity style={{width:40, height:40, alignItems:'center', justifyContent:'center'}} onPress={deletepost}>
+                    <Image style={{width:15, height:15}} source={require("../assets/cross.png")}/>
+                </TouchableOpacity>
             </View>
             
-            <Text style={{marginHorizontal:10, marginBottom:10}}>{Description}</Text>
+            <Text style={{marginHorizontal:10, marginBottom:10, fontSize:30}}>{Title}</Text>
+
+            <Text style={{marginHorizontal:10}}>{Description}</Text>
             
             <Image source={Picture} style={{width:'100%', height: ImageHeight, resizeMode:'contain'}}/>
 
@@ -72,7 +113,7 @@ export function Post({PostId,CreatedAt,Username,Avatar,UserId,Description,Pictur
                     <Image source={require("../assets/like.png")}/>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={{marginRight:10}} onPress={() => navigation.navigate("Comment",{postid:PostId, userid:Myid})}>
+                <TouchableOpacity style={{marginRight:10}} /*onPress={() => navigation.navigate("Comment",{postid:PostId, userid:Myid})}*/>
                     <Image source={require("../assets/comment.png")}/>
                 </TouchableOpacity>
                 

@@ -13,7 +13,8 @@ export default function Home({navigation,route}){
     const [db, setDb] = useState(null);
     const [myid,setMyid] = useState("");
 
-    useFocusEffect(
+    {/**
+        useFocusEffect(
         React.useCallback(() => {
             const loadpost = async() => {
                 const db = await getDB();
@@ -25,19 +26,32 @@ export default function Home({navigation,route}){
             loadpost();
         }, [])
     );
+    */}
+    useFocusEffect(
+        React.useCallback(() => {
+            const loadpost = async() => {
+                const res = await fetch('http://blackntt.net:4321/posts',{method:'GET'});
+                const data = await res.json();
+                setPostdata(data);
+            }
+            loadpost();
+        })
+    )
+    useEffect(() => {
+        
+    },[])
+    
 
     return (
         <View style={style.container}>
             <View style={style.header}>
-                <Text style={style.techbook}>fakebook</Text>
-                <TouchableOpacity style={{}}>
-                    <Image source={require("../assets/search.png")}/>
-                </TouchableOpacity>
+                <Text style={style.techbook}>fakebook :3</Text>
             </View>
             
 
             <ScrollView style={{flex:1,width:'100%',backgroundColor:'lightgray'}}>
-                {postsData.map((post,index) => (
+                {/**
+                 * {postsData.map((post,index) => (
                     <Post
                     key={index}
                     PostId={post.postid}
@@ -50,7 +64,20 @@ export default function Home({navigation,route}){
                     ImageHeight={post.imageHeight}
                     Myid={myid}
                     />
-                ))}            
+                ))}        
+                 */}
+                {postsData.map((post,index) => (
+                    <Post
+                    key={index}
+                    PostId={post.id}
+                    Title={post.title}
+                    UserId={post.creator_email}
+                    Username={post.creator_name}
+                    CreatedAt={post.created_at}
+                    Description={post.description}
+                    />
+                ))}
+                    
             </ScrollView>
         </View>
     )
